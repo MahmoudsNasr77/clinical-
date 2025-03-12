@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container text-center">
+        <h1 class="mb-4">مرحبًا بك في نظام إدارة العيادة</h1>
+        <p class="lead">قم بإدارة المرضى والأطباء بكفاءة باستخدام نظامنا.</p>
+        {% if user.is_superuser %}
+        <a href="{% url 'managments:patient' %}" class="btn btn-primary">عرض المرضي</a>
+        {%else%}
+        <a href="{% url 'managments:patient' %}" class="btn btn-primary">عرض موعدي</a>
+        {%endif%}
+        <a href="{% url 'managments:doctor' %}" class="btn btn-secondary">عرض الأطباء</a>
+        <a href="{% url 'managments:painetSignup' %}" class="btn btn-secondary"> حجز موعد</a>
+
+        
+    </div>
+
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">أفضل 5 أطباء</h2>
+        <ul class="list-group">
+            {% for doctor in doctor %}
+                <li class="list-group-item d-flex align-items-center">
+                    <img src="{{ doctor.image.url }}" alt="{{ doctor.name }}" class="rounded-circle me-3" width="50" height="50">
+                    <div>
+                        <strong>{{ doctor.name }}</strong> - {{ doctor.specialization }}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

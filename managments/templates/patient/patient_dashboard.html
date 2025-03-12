@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <h2 class="text-center text-primary mb-4">قائمة المرضى</h2>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>الاسم</th>
+                    <th>البريد الإلكتروني</th>
+                    <th>الهاتف</th>
+                    <th>العنوان</th>
+                    <th>العمر</th>
+                    <th>الطبيب المشرف</th>
+                    <th>التشخيص</th>
+                    <th>تاريخ التسجيل</th>
+                    <th>الموعد المحدد للكشف</th>
+                    {% if user.is_superuser %}
+                    <th>تحديث الموعد</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for patient in patients %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ patient.name }}</td>
+                    <td>{{ patient.email }}</td>
+                    <td>{{ patient.phone }}</td>
+                    <td>{{ patient.address }}</td>
+                    <td>{{ patient.age }}</td>
+                    <td>{{ patient.doctor.name }}</td>
+                    <td>{{ patient.diagnosis }}</td>
+                    <td>{{ patient.created_at|date:"Y-m-d h:i A" }}</td>
+                    
+                    <td>
+                        {% if patient.discharge_date %}
+                            {{ patient.discharge_date|date:"Y-m-d" }}
+                        {% else %}
+                            <span class="text-danger">لم يصدر بعد</span>
+                        {% endif %}
+                    </td>
+
+                    {% if user.is_superuser %}
+                    <td>
+                        <form method="POST" action="{% url 'managments:update_discharge_date' patient.id %}">
+                            {% csrf_token %}
+                            <input type="date" name="discharge_date" class="form-control" value="{{ patient.discharge_date|date:'Y-m-d' }}">
+                            <button type="submit" class="btn btn-success btn-sm mt-1">تحديث</button>
+                        </form>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="11" class="text-center text-muted">لا يوجد مرضى مسجلون</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
