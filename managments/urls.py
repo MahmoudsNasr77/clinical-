@@ -13,6 +13,7 @@ urlpatterns = [
     path("login/", views.PatientLoginView.as_view(), name="login"),
     path("logout/", LogoutView.as_view(next_page="managments:login"), name="logout"),
         path("update-discharge/<int:patient_id>/", views.update_discharge_date, name="update_discharge_date"),
+        path("book_appointment", views.book_appointment, name="book_appointment"),
 
 ]
 if settings.DEBUG:

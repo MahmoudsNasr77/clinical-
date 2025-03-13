@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
-from .models import Doctor, Patient
-
+from .models import Doctor, Patient,Appointment
+from django.contrib import messages
 # تخصيص إعدادات لوحة التحكم
 admin.site.site_header = _("لوحة تحكم العيادة")
 admin.site.site_title = _("إدارة العيادة")
@@ -32,3 +32,12 @@ class PatientAdmin(admin.ModelAdmin):
         (_("التواريخ"), {"fields": ("admission_date", "discharge_date", "created_at", "updated_at")}),
     )
     readonly_fields = ("created_at", "updated_at")
+    actions = ["send_notification"]
+
+    def send_notification(self, request, queryset):
+        for patient in queryset:
+            messages.success(request, f"مرحبًا {patient.name}، لديك إشعار جديد من العيادة!")
+        self.message_user(request, "تم إرسال الإشعارات بنجاح!", messages.SUCCESS)
+
+    send_notification.short_description = "🔔 إرسال إشعار للمرضى"
+admin.site.register(Appointment)

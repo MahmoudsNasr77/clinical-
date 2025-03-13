@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class Doctor(models.Model):
@@ -10,9 +9,7 @@ class Doctor(models.Model):
     phone = models.CharField(max_length=200, verbose_name="رقم الهاتف")
     image = models.ImageField(upload_to='doctors/', null=True, blank=True, verbose_name="الصورة")
     specialization = models.CharField(max_length=200, verbose_name="التخصص")
-    rate = models.IntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(10)], 
-     verbose_name="التقييم") 
+   
     address = models.CharField(max_length=200, verbose_name="العنوان")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ الإنشاء")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="آخر تحديث")
@@ -30,7 +27,7 @@ class Patient(models.Model):
     email = models.EmailField(max_length=200, verbose_name="البريد الإلكتروني")
     phone = models.CharField(max_length=200, verbose_name="رقم الهاتف")
     address = models.CharField(max_length=200, verbose_name="العنوان")
-    age = models.IntegerField(verbose_name="العمر")
+    age = models.IntegerField(verbose_name="العمر",null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ النسجيل")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="آخر تحديث")
 
@@ -50,3 +47,14 @@ class Patient(models.Model):
     class Meta:
         verbose_name = "مريض"
         verbose_name_plural = "المرضى"
+class Appointment(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, verbose_name=("المريض"))
+    date = models.DateTimeField(verbose_name=("تاريخ ووقت الموعد"))
+    reason = models.TextField(verbose_name=("سبب الزيارة"))
+
+    def __str__(self):
+        return f"موعد لـ {self.patient.name} في {self.date.strftime('%Y-%m-%d %H:%M')}"
+
+    class Meta:
+        verbose_name = ("موعد")
+        verbose_name_plural = ("المواعيد")

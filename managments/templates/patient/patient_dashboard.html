@@ -1,6 +1,18 @@
 {% extends 'base.html' %}
 {% block content %}
 
+<!-- Display Django Messages -->
+{% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
 <div class="container mt-5">
     <h2 class="text-center text-primary mb-4">قائمة المرضى</h2>
 
@@ -37,10 +49,14 @@
                     <td>{{ patient.created_at|date:"Y-m-d h:i A" }}</td>
                     
                     <td>
-                        {% if patient.discharge_date %}
-                            {{ patient.discharge_date|date:"Y-m-d" }}
+                        {% if patient.appointment_set.all %}
+                            <ul>
+                                {% for appointment in patient.appointment_set.all %}
+                                    <li>{{ appointment.date|date:"Y-m-d h:i A" }} - {{ appointment.reason }}</li>
+                                {% endfor %}
+                            </ul>
                         {% else %}
-                            <span class="text-danger">لم يصدر بعد</span>
+                            <span class="text-danger">لا توجد مواعيد</span>
                         {% endif %}
                     </td>
 
